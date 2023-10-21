@@ -21,7 +21,7 @@
 <div class="content-wrapper">
     <div class="container">
         <div class="versions">
-            {{range .Versions}}
+            {{range $j, $a := .Versions}}
             <h1>
                 Version: {{.Group}}/{{.Version}}<br>
                 Kind: {{.Kind}}
@@ -40,16 +40,16 @@
             </div>
             </p>
             <div class="d-flex flex-row-reverse mb-10 mt-10">
-                <button class="btn ml-10" type="button" onclick="expandAll()">
+                <button class="btn ml-10" type="button" onclick="expandAll({{$j}})">
                     + expand all
                 </button>
-                <button class="btn" type="button" onclick="collapseAll()">
+                <button class="btn" type="button" onclick="collapseAll({{$j}})">
                     - collapse all
                 </button>
             </div>
             <div class="collapse-group">
                 {{range $i, $v := .Properties}}
-                <details class="collapse-panel">
+                <details class="collapse-panel expand-trigger-{{$j}}">
                     <summary class="collapse-header position-relative">
                         {{$v.Name}} <kbd class="text-muted">{{$v.Type}}</kbd>
                         {{if .Format}}
@@ -77,12 +77,20 @@
     </div>
 </div>
 <script>
-    function expandAll() {
-        console.log("todo: loop through all elements and expand them")
+    function expandAll(i) {
+        const matches1 = document.querySelectorAll("details.expand-trigger-" + i);
+        //const matches2 = document.querySelectorAll("details.expand-trigger");
+        
+        matches1.forEach((element) => element.setAttribute("open", ""))
+        //matches2.forEach((element) => element.setAttribute("open", ""))
     }
 
-    function collapseAll() {
-        console.log("todo: loop through all elements and collapse them")
+    function collapseAll(i) {
+        const matches1 = document.querySelectorAll("details.expand-trigger-" + i);
+        //const matches2 = document.querySelectorAll("details.expand-trigger");
+
+        matches1.forEach((element) => element.removeAttribute("open"))
+        //matches2.forEach((element) => element.removeAttribute("open"))
     }
 </script>
 <script src="static/js/prism.js">
@@ -96,7 +104,7 @@
 {{define "properties"}}
 {{if .}}
 {{range . }}
-<details class="collapse-panel">
+<details class="collapse-panel expand-trigger">
     <summary class="collapse-header position-relative">
         {{.Name}} <kbd class="text-muted">{{.Type}}</kbd>
         {{if .Format}}
